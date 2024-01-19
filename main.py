@@ -3,6 +3,7 @@ import threading
 import tkinter as tk
 from tkinter import ttk, PhotoImage
 import matplotlib.pyplot as plt
+import pygame as pyg
 
 
 class PomodoroTimer():
@@ -37,7 +38,8 @@ class PomodoroTimer():
 		self.grid_layout = ttk.Frame(self.root)
 		self.grid_layout.pack(pady=10)
 		
-		self.start_button = ttk.Button(self.grid_layout, text="Start", command=lambda: [self.start_timer_thread(), self.change_name_stop()])
+		self.start_button = ttk.Button(self.grid_layout, text="Start", command=lambda: 
+			[self.start_timer_thread(), self.change_name_stop(), self.play()])
 		self.start_button.grid(row=0, column=0)
 
 		self.skip_button = ttk.Button(self.grid_layout, text='Skip', command=self.skip_clock)
@@ -61,6 +63,8 @@ class PomodoroTimer():
 		self.stopped = False
 		self.running = False
 
+		self.pyg = pyg
+		self.pyg.mixer.init()
 
 		self.root.mainloop()
 
@@ -133,9 +137,6 @@ class PomodoroTimer():
 				print('fudeu!!!')
 
 
-
-
-
 	def reset_clock(self):
 		self.stopped = True
 		self.skipped = False
@@ -159,6 +160,10 @@ class PomodoroTimer():
 
 		self.stopped = True
 		self.skipped = True
+
+	def play(self):
+		self.pyg.mixer.music.load("magic-ring.wav")
+		self.pyg.mixer.music.play(loops=0)
 
 
 	def remember(self):
