@@ -6,7 +6,7 @@ from tkinter import ttk, PhotoImage
 import matplotlib.pyplot as plt
 import pygame as pyg
 import sqlite3
-
+import molho_de_tomate.db
 
 
 class PomodoroTimer():
@@ -126,6 +126,7 @@ class PomodoroTimer():
 
 		self.skipped = False
 		timer_id = self.tabs.index(self.tabs.select()) + 1
+		self.play()
 
 		if timer_id == 1:
 			full_seconds = 60 * 30
@@ -183,7 +184,7 @@ class PomodoroTimer():
 		self.long_break_timer_label.config(text='20:00')
 		self.pomodoro_counter_label.config(text='Pomodoros: 0')
 		self.running = False
-
+		self.change_name_stop()
 
 
 	def skip_clock(self):
