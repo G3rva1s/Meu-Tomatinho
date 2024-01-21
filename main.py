@@ -1,4 +1,5 @@
 import time
+from time import strftime
 import threading
 import tkinter as tk
 from tkinter import ttk, PhotoImage
@@ -6,11 +7,12 @@ import matplotlib.pyplot as plt
 import pygame as pyg
 
 
+
 class PomodoroTimer():
 
 	def __init__(self):
 		self.root = tk.Tk()
-		self.root.geometry("600x300")
+		self.root.geometry("750x300")
 		self.root.title("Meu proprio tomatinho")
 		self.root.tk.call('wm', 'iconphoto', self.root._w, PhotoImage(file="tomato.png"))
 
@@ -40,24 +42,37 @@ class PomodoroTimer():
 		
 		self.start_button = ttk.Button(self.grid_layout, text="Start", command=lambda: 
 			[self.start_timer_thread(), self.change_name_stop(), self.play()])
-		self.start_button.grid(row=0, column=0)
+		self.start_button.grid(row=1, column=0)
 
 		self.skip_button = ttk.Button(self.grid_layout, text='Skip', command=self.skip_clock)
-		self.skip_button.grid(row=0, column=1)
+		self.skip_button.grid(row=1, column=1)
 
 		self.reset_button = ttk.Button(self.grid_layout, text='Reset', command=self.reset_clock)
-		self.reset_button.grid(row=0, column=2)
+		self.reset_button.grid(row=1, column=2)
 
 		self.Stats_button = ttk.Button(self.grid_layout, text='Stats', command=self.remember)
-		self.Stats_button.grid(row=0, column=3)
+		self.Stats_button.grid(row=1, column=3)
 
 		self.tabs.add(self.tab1, text="Pomodoro")
 		self.tabs.add(self.tab2, text="Pausa Curta")
 		self.tabs.add(self.tab3, text="Pausa Longa")
 
 		self.pomodoro_counter_label = ttk.Label(self.grid_layout, text="Pomodoros hoje: 0", font=('Ubuntu', 16))
-		self.pomodoro_counter_label.grid(row=1, column=0, columnspan=3)
+		self.pomodoro_counter_label.grid(row=2, column=0, columnspan=3)
 
+
+		self.today_time = ttk.Label(self.grid_layout, 
+									font = ('calibri', 40, 'bold'),
+						            foreground = 'black')
+		self.today_time.grid(row=2, column=3, columnspan=1)
+			
+		def time():
+		    string = strftime('%H:%M:%S %p')
+		    self.today_time.config(text = string)
+		    self.today_time.after(1000, time)
+		
+
+		
 		self.pomodoros = 0
 		self.skipped = False
 		self.stopped = False
@@ -65,6 +80,9 @@ class PomodoroTimer():
 
 		self.pyg = pyg
 		self.pyg.mixer.init()
+
+		self.time = time
+		self.time()
 
 		self.root.mainloop()
 
@@ -166,9 +184,26 @@ class PomodoroTimer():
 		self.pyg.mixer.music.play(loops=0)
 
 
+	def today_is():
+		pass
+
+	def clock():
+		pass
+
+
+	def add_todays_pomod(data, numero_de_pomodoros):
+		conn = sqlite3.connect('molho_de_tomate.db')
+		c = conn.cursor()
+		c.execute("INSERT INTO pomodoros VALUES (?,?)", (data, numero_de_pomodoros))
+		conn.commit()
+		conn.close()
+
 	def remember(self):
-		days = ['amanha','depois', 'hoje']
-		numbers = [3, 4, 5]
+		conn = sqlite3.connect('molho_de_tomate.db')
+		c = conn.cursor()
+
+		days = [c.execute("SELECT rowid, * FROM molho_de_tomate.db")]
+		numbers = [numero_de_pomodoros]
 		plt.plot(days, numbers)
 		plt.xlabel('Days')
 		plt.ylabel('pudim')
