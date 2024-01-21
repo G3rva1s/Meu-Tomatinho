@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import ttk, PhotoImage
 import matplotlib.pyplot as plt
 import pygame as pyg
+import sqlite3
 
 
 
@@ -12,7 +13,7 @@ class PomodoroTimer():
 
 	def __init__(self):
 		self.root = tk.Tk()
-		self.root.geometry("750x300")
+		self.root.geometry("950x300")
 		self.root.title("Meu proprio tomatinho")
 		self.root.tk.call('wm', 'iconphoto', self.root._w, PhotoImage(file="tomato.png"))
 
@@ -27,6 +28,7 @@ class PomodoroTimer():
 		self.tab1 = ttk.Frame(self.tabs, width=600, height=100)
 		self.tab2 = ttk.Frame(self.tabs, width=600, height=100)
 		self.tab3 = ttk.Frame(self.tabs, width=600, height=100)
+		self.tab4 = ttk.Frame(self.tabs, width=600, height=100)
 
 		self.pomodoro_timer_label = ttk.Label(self.tab1, text='30:00', font=('Arial', 48))
 		self.pomodoro_timer_label.pack(pady=20)	
@@ -37,6 +39,9 @@ class PomodoroTimer():
 		self.long_break_timer_label = ttk.Label(self.tab3, text='20:00', font=('Arial', 48))
 		self.long_break_timer_label.pack(pady=20)
 
+		self.data_label = ttk.Label(self.tab4, text='Dia do ano', font=('Arial', 48))
+		self.data_label.pack(pady=20)
+
 		self.grid_layout = ttk.Frame(self.root)
 		self.grid_layout.pack(pady=10)
 		
@@ -44,18 +49,27 @@ class PomodoroTimer():
 			[self.start_timer_thread(), self.change_name_stop(), self.play()])
 		self.start_button.grid(row=1, column=0)
 
-		self.skip_button = ttk.Button(self.grid_layout, text='Skip', command=self.skip_clock)
+		self.skip_button = ttk.Button(self.grid_layout, text='Skip', 
+			command=self.skip_clock)
 		self.skip_button.grid(row=1, column=1)
 
-		self.reset_button = ttk.Button(self.grid_layout, text='Reset', command=self.reset_clock)
+		self.reset_button = ttk.Button(self.grid_layout, text='Reset', 
+			command=self.reset_clock)
 		self.reset_button.grid(row=1, column=2)
 
-		self.Stats_button = ttk.Button(self.grid_layout, text='Stats', command=self.remember)
+		self.Stats_button = ttk.Button(self.grid_layout, text='Stats', 
+			command=self.see)
 		self.Stats_button.grid(row=1, column=3)
+
+		self.Save_button = ttk.Button(self.grid_layout, text='Save', 
+			command=self.see)
+		self.Save_button.grid(row=1, column=4)
+
 
 		self.tabs.add(self.tab1, text="Pomodoro")
 		self.tabs.add(self.tab2, text="Pausa Curta")
 		self.tabs.add(self.tab3, text="Pausa Longa")
+		self.tabs.add(self.tab4, text="Dia")
 
 		self.pomodoro_counter_label = ttk.Label(self.grid_layout, text="Pomodoros hoje: 0", font=('Ubuntu', 16))
 		self.pomodoro_counter_label.grid(row=2, column=0, columnspan=3)
@@ -66,6 +80,10 @@ class PomodoroTimer():
 						            foreground = 'black')
 		self.today_time.grid(row=2, column=3, columnspan=1)
 			
+		def days():
+			pass
+
+
 		def time():
 		    string = strftime('%H:%M:%S %p')
 		    self.today_time.config(text = string)
@@ -73,13 +91,14 @@ class PomodoroTimer():
 		
 
 		
-		self.pomodoros = 0
+		self.numero_de_pomodoros = 0
 		self.skipped = False
 		self.stopped = False
 		self.running = False
 
 		self.pyg = pyg
 		self.pyg.mixer.init()
+
 
 		self.time = time
 		self.time()
@@ -118,9 +137,9 @@ class PomodoroTimer():
 				full_seconds -= 1
 
 			if not self.stopped or self.skipped:
-				self.pomodoros += 1
-				self.pomodoro_counter_label.config(text=f'Pomodoros: {self.pomodoros:}')
-				if self.pomodoros % 4 == 0:
+				self.numero_de_pomodoros += 1
+				self.pomodoro_counter_label.config(text=f'Pomodoros: {self.numero_de_pomodoros:}')
+				if self.numero_de_pomodoros % 4 == 0:
 					self.tabs.select(2)
 					self.start_timer()
 				else:
@@ -158,7 +177,7 @@ class PomodoroTimer():
 	def reset_clock(self):
 		self.stopped = True
 		self.skipped = False
-		self.pomodoros = 0
+		self.numero_de_pomodoros = 0
 		self.pomodoro_timer_label.config(text="30:00")
 		self.short_break_timer_label.config(text='10:00')
 		self.long_break_timer_label.config(text='20:00')
@@ -198,7 +217,7 @@ class PomodoroTimer():
 		conn.commit()
 		conn.close()
 
-	def remember(self):
+	def see(self):
 		conn = sqlite3.connect('molho_de_tomate.db')
 		c = conn.cursor()
 
