@@ -6,14 +6,15 @@ from tkinter import ttk, PhotoImage
 import matplotlib.pyplot as plt
 import pygame as pyg
 import sqlite3
-import molho_de_tomate.db
+from tkcalendar import*
+#import molho_de_tomate.db
 
 
 class PomodoroTimer():
 
 	def __init__(self):
 		self.root = tk.Tk()
-		self.root.geometry("950x300")
+		self.root.geometry("620x450")
 		self.root.title("Meu proprio tomatinho")
 		self.root.tk.call('wm', 'iconphoto', self.root._w, PhotoImage(file="tomato.png"))
 
@@ -30,17 +31,26 @@ class PomodoroTimer():
 		self.tab3 = ttk.Frame(self.tabs, width=600, height=100)
 		self.tab4 = ttk.Frame(self.tabs, width=600, height=100)
 
-		self.pomodoro_timer_label = ttk.Label(self.tab1, text='30:00', font=('Arial', 48))
+		self.pomodoro_timer_label = ttk.Label(self.tab1, text='30:00', font=('Arial', 120))
 		self.pomodoro_timer_label.pack(pady=20)	
 
-		self.short_break_timer_label = ttk.Label(self.tab2, text='10:00', font=('Arial', 48))
+		self.short_break_timer_label = ttk.Label(self.tab2, text='10:00', font=('Arial', 120))
 		self.short_break_timer_label.pack(pady=20)
 
-		self.long_break_timer_label = ttk.Label(self.tab3, text='20:00', font=('Arial', 48))
+		self.long_break_timer_label = ttk.Label(self.tab3, text='20:00', font=('Arial', 120))
 		self.long_break_timer_label.pack(pady=20)
 
-		self.data_label = ttk.Label(self.tab4, text='Dia do ano', font=('Arial', 48))
-		self.data_label.pack(pady=20)
+		self.today_time = ttk.Label(self.tab4, 
+									font = ('calibri', 48, 'bold'),
+						            foreground = 'black')
+		self.today_time.pack(pady=20)
+
+		
+		self.moment = Calendar()
+		self.cal_label = ttk.Label(self.tab4, text=self.moment.get_date(),
+								   font = ('calibri', 48, 'bold'))
+		self.cal_label.pack(pady=10)
+		
 
 		self.grid_layout = ttk.Frame(self.root)
 		self.grid_layout.pack(pady=10)
@@ -59,11 +69,11 @@ class PomodoroTimer():
 
 		self.Stats_button = ttk.Button(self.grid_layout, text='Stats', 
 			command=self.see)
-		self.Stats_button.grid(row=1, column=3)
+		self.Stats_button.grid(row=2, column=1)
 
 		self.Save_button = ttk.Button(self.grid_layout, text='Save', 
 			command=self.see)
-		self.Save_button.grid(row=1, column=4)
+		self.Save_button.grid(row=2, column=0)
 
 
 		self.tabs.add(self.tab1, text="Pomodoro")
@@ -72,15 +82,11 @@ class PomodoroTimer():
 		self.tabs.add(self.tab4, text="Dia")
 
 		self.pomodoro_counter_label = ttk.Label(self.grid_layout, text="Pomodoros hoje: 0", font=('Ubuntu', 16))
-		self.pomodoro_counter_label.grid(row=2, column=0, columnspan=3)
+		self.pomodoro_counter_label.grid(row=3, column=0, columnspan=4, pady=10)
 
 
-		self.today_time = ttk.Label(self.grid_layout, 
-									font = ('calibri', 40, 'bold'),
-						            foreground = 'black')
-		self.today_time.grid(row=2, column=3, columnspan=1)
-			
-		def days():
+					
+		def days(self):
 			pass
 
 
@@ -102,6 +108,7 @@ class PomodoroTimer():
 
 		self.time = time
 		self.time()
+
 
 		self.root.mainloop()
 
@@ -195,6 +202,7 @@ class PomodoroTimer():
 			self.short_break_timer_label.config(text='10:00')
 		elif current_tab == 2:
 			self.long_break_timer_label.config(text='20:00')
+
 
 		self.stopped = True
 		self.skipped = True
