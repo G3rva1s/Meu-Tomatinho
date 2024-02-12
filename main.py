@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import pygame as pyg
 import sqlite3
 from tkcalendar import*
-#import molho_de_tomate.db
 
 
 class PomodoroTimer():
@@ -72,7 +71,10 @@ class PomodoroTimer():
 		self.Stats_button.grid(row=2, column=1)
 
 		self.Save_button = ttk.Button(self.grid_layout, text='Save', 
-			command=self.see)
+                              command=lambda: self.add_todays_pomod(self.moment.get_date()))
+												#self.add_todays_pomod(self.moment.get_date())
+												#self.add_todays_pomod(data, self.numero_de_pomodoros)
+
 		self.Save_button.grid(row=2, column=0)
 
 
@@ -219,10 +221,10 @@ class PomodoroTimer():
 		pass
 
 
-	def add_todays_pomod(data, numero_de_pomodoros):
+	def add_todays_pomod(self, data):
 		conn = sqlite3.connect('molho_de_tomate.db')
 		c = conn.cursor()
-		c.execute("INSERT INTO pomodoros VALUES (?,?)", (data, numero_de_pomodoros))
+		c.execute("INSERT INTO pomodoros VALUES (?,?)", (data, self.numero_de_pomodoros))
 		conn.commit()
 		conn.close()
 
@@ -230,16 +232,27 @@ class PomodoroTimer():
 		conn = sqlite3.connect('molho_de_tomate.db')
 		c = conn.cursor()
 
-		days = [c.execute("SELECT rowid, * FROM molho_de_tomate.db")]
-		numbers = [numero_de_pomodoros]
-		plt.plot(days, numbers)
-		plt.xlabel('Days')
-		plt.ylabel('pudim')
+		c.execute("SELECT * FROM pomodoros")
+		
+		items = c.fetchall()
+		
+		dates = []
+		pomodoros = []
+
+		for item in items:
+			dates.append(item[0])
+			pomodoros.append(item[1])
+			
+
+		plt.plot(dates, pomodoros)
+		plt.xlabel('Dia')
+		plt.ylabel('Nº Pomos')
 		plt.title('try again')
 
 		plt.show()
 
-
+		conn.commit()
+		conn.close()
 
 PomodoroTimer()
 
