@@ -7,6 +7,12 @@ import matplotlib.pyplot as plt
 import pygame as pyg
 import sqlite3
 from tkcalendar import*
+from collections import defaultdict
+
+
+#cores
+red_bebe = '#FA8072'
+
 
 
 class PomodoroTimer():
@@ -14,12 +20,14 @@ class PomodoroTimer():
 	def __init__(self):
 		self.root = tk.Tk()
 		self.root.geometry("620x450")
+		self.root['bg'] = '#FA8072'
 		self.root.title("Meu proprio tomatinho")
 		self.root.tk.call('wm', 'iconphoto', self.root._w, PhotoImage(file="tomato.png"))
 
 		self.s = ttk.Style()
 		self.s.configure('TNotebook.Tab', font=('Ubuntu', 16))
 		self.s.configure('TButton', font=("Ubuntu", 16))
+		#self.s.configure(bg = red_bebe)
 
 		self.tabs = ttk.Notebook(self.root)
 		self.tabs.pack(fill="both", pady=10, expand=True)
@@ -236,15 +244,19 @@ class PomodoroTimer():
 		
 		items = c.fetchall()
 		
-		dates = []
-		pomodoros = []
+		pomodoros_por_dia = defaultdict(int)
 
 		for item in items:
-			dates.append(item[0])
-			pomodoros.append(item[1])
+			data = item[0]
+			pomodoros = item[1]
+
+			pomodoros_por_dia[data] += pomodoros
+
+		dates = list(pomodoros_por_dia.keys())
+		total_pomodoros = list(pomodoros_por_dia.values())
 			
 
-		plt.plot(dates, pomodoros)
+		plt.plot(dates, total_pomodoros)
 		plt.xlabel('Dia')
 		plt.ylabel('Nº Pomos')
 		plt.title('try again')
