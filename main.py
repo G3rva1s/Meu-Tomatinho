@@ -101,12 +101,11 @@ class PomodoroTimer():
 
 
 		def time():
-		    string = strftime('%H:%M:%S %p')
-		    self.today_time.config(text = string)
-		    self.today_time.after(1000, time)
-		
+			string = strftime('%H:%M:%S %p')
+			self.today_time.config(text = string)
+			self.today_time.after(1000, time)
+			
 
-		
 		self.numero_de_pomodoros = 0
 		self.skipped = False
 		self.stopped = False
@@ -230,9 +229,13 @@ class PomodoroTimer():
 
 
 	def add_todays_pomod(self, data):
+		
+
+		data_formatada = data.strftime('%d/%m/%Y')
+
 		conn = sqlite3.connect('molho_de_tomate.db')
 		c = conn.cursor()
-		c.execute("INSERT INTO pomodoros VALUES (?,?)", (data, self.numero_de_pomodoros))
+		c.execute("INSERT INTO pomodoros VALUES (?,?)", (data_formatada, self.numero_de_pomodoros))
 		conn.commit()
 		conn.close()
 
