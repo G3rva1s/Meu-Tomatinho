@@ -53,7 +53,7 @@ class PomodoroTimer():
 		self.today_time.pack(pady=20)
 
 		
-		self.moment = Calendar()
+		self.moment = Calendar(self.tab4, date_pattern="dd/mm/yyyy")
 		self.cal_label = ttk.Label(self.tab4, text=self.moment.get_date(),
 								   font = ('calibri', 48, 'bold'))
 		self.cal_label.pack(pady=10)
@@ -229,13 +229,9 @@ class PomodoroTimer():
 
 
 	def add_todays_pomod(self, data):
-		
-
-		data_formatada = data.strftime('%d/%m/%Y')
-
 		conn = sqlite3.connect('molho_de_tomate.db')
 		c = conn.cursor()
-		c.execute("INSERT INTO pomodoros VALUES (?,?)", (data_formatada, self.numero_de_pomodoros))
+		c.execute("INSERT INTO pomodoros VALUES (?,?)", (data, self.numero_de_pomodoros))
 		conn.commit()
 		conn.close()
 
